@@ -29,7 +29,7 @@ CUDA 版本：12.6
 TensorRT 版本：10.3.0.26 或更高。
 
 # Docker配置
-## Docker Pull
+## 拉取ubuntu22.04镜像，创建容器 `Deepstream`
 ```bash
 docker pull ubuntu:22.04
 docker run -it --name Deepstream ubuntu:22.04 /bin/bash # 下次启动使用:docker start -ai Deepstream
@@ -56,15 +56,22 @@ gst-inspect-1.0 --version # 查看Gstreamer版本
 ```
 
 ## Install Nvidia driver
-```bash
-apt update
-apt install -y software-properties-common
-add-apt-repository ppa:graphics-drivers/ppa
-apt update
-apt install -y nvidia-driver-560
-exit # 退出容器
-docker restart Deepstream # 重启容器
-docker start -ai Deepstream # 重新进入容器
-```
+在 Docker 容器内直接安装 NVIDIA 驱动是不推荐的，因为 NVIDIA 驱动通常是需要直接与宿主机的硬件进行交互的，而 Docker 容器是为了提供与宿主机隔离的运行环境。安装 NVIDIA 驱动程序通常是宿主机操作系统的任务，而不是容器内的任务。
 
+正确的做法：通过 nvidia-container-tooklit 和 NVIDIA 驱动支持 GPU
 
+为了让 Docker 容器使用 NVIDIA GPU，你需要在宿主机上安装 NVIDIA 驱动程序并配置 nvidia-container-tooklit 工具。容器中的 GPU 访问是通过宿主机的 NVIDIA 驱动和 nvidia-container-toolkit 实现的。
+
+1. 确保宿主机安装了nvidia驱动 (nvidia-smi检查）
+
+2. 安装 NVIDIA Docker（nvidia-container-toolkit） （安装参考: https://github.com/NVIDIA/nvidia-container-toolkit） (使用指令检查是否安装好: nvidia-container-tooklit --version）
+
+3. 关闭容器`Deepstream`, 使用带gpu的方式启动
+   ```bash
+   sudo docker stop Deepstream
+   sudo docker start -i --gpus all Deepstream
+   ```
+
+5.  
+
+6.  
